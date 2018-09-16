@@ -1,0 +1,12 @@
+---
+
+- hosts: localhost
+  tasks:
+    
+    - name: bootstrap up Cloud9 simple
+      cloudformation:
+          stack_name: simple-cloud9 # required. name of the cloudformation stack
+          profile: odyssey_aws_ops # not required. Uses a boto profile. Only works with boto >= 2.24.0.
+          region: us-east-1 # not required. The AWS region to use. If not specified then the value of the AWS_REGION or EC2_REGION environment variable, if any, is used. See U(http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region)
+          state: present # not required. choices: present;absent. If state is "present", stack will be created.  If state is "present" and if stack exists and template has changed, it will be updated. If state is "absent", stack will be removed.
+          template: ../cloudformation/Cloud9DevBox.yml
