@@ -1,0 +1,21 @@
+---
+
+- hosts: localhost
+  tasks:
+    
+
+    # the AWS CLI lets us provide paramateres in a json (ONLY!) format
+    # we want to do the same thing in Ansible - giving us a lay to
+    # have things work just calling the aws cli on the command line if we really win_share
+    #
+    # this is, of course, slightly more complicated...
+    # ... but we handle it with a custom filter, filter_plugins/cf_params_to_keys.py
+
+    - name: bootstrap up Cloud9 when we have provided parameters
+      cloudformation:
+          stack_name: complex-cloud9 # required. name of the cloudformation stack
+          profile: odyssey_aws_ops # not required. Uses a boto profile. Only works with boto >= 2.24.0.
+          region: us-east-1 # not required. The AWS region to use. If not specified then the value of the AWS_REGION or EC2_REGION environment variable, if any, is used. See U(http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region)
+          state: present # not required. choices: present;absent. If state is "present", stack will be created.  If state is "present" and if stack exists and template has changed, it will be updated. If state is "absent", stack will be removed.
+          template: ../cloudformation/cloud9_with_params/devbox_template.yml
+          template_parameters: "{{ lookup('file', '../cloudformation/cloud9_with_params/devbox_params.json') | cf_params_to_keys }}"

@@ -1,0 +1,20 @@
+Parameters: 
+  InstanceType: 
+    Type: "String"
+    Default: "m1.small"
+    Description: "EC2 instance type, e.g. m1.small, m1.large, etc."
+
+Resources:
+  devboxfromparams:
+    Type: 'AWS::Cloud9::EnvironmentEC2'
+    Properties: 
+      InstanceType: !Ref InstanceType
+      AutomaticStopTimeMinutes: 20
+      Name: Odyssey
+
+Outputs:
+  cloud9odysseyname:
+    Description: Name of the instance created
+    Value: !GetAtt devboxfromparams.Name
+    Export:
+      Name: cloud9odysseyname
