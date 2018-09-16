@@ -1,3 +1,3 @@
 *.pyc
-*.replay
+*.retry
 *.json.output
