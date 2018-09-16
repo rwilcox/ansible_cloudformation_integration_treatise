@@ -1,0 +1,19 @@
+---
+
+- hosts: localhost
+  tasks:
+
+    - name: Dynamically look up AWS Stack outputs into our parameter template file
+      local_action: template src=../cloudformation/cloud9_with_lookup/devbox_params.json.tmpl dest=../cloudformation/cloud9_with_lookup/devbox_params.json.output
+   
+    - name: bootstrap up Cloud9 with lookups from other stacks 
+      cloudformation:
+          stack_name: lookup-cloud9 # required. name of the cloudformation stack
+          region: us-east-1 # not required. The AWS region to use. If not specified then the value of the AWS_REGION or EC2_REGION environment variable, if any, is used. See U(http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region)
+          state: present # not required. choices: present;absent. If state is "present", stack will be created.  If state is "present" and if stack exists and template has changed, it will be updated. If state is "absent", stack will be removed.
+          template: ../cloudformation/cloud9_with_lookup/devbox_template.yml
+          template_parameters: "{{ lookup('file', '../cloudformation/cloud9_with_lookup/devbox_params.json.output') | cf_params_to_keys }}"
+
+    # - name: Clean up the local, generated, file
+    #  file: name=../cloudformation/cloud9_with_lookup/devbox_params.json.output state=absent
+

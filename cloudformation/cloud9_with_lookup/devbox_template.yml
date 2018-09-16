@@ -1,0 +1,18 @@
+Parameters: 
+  InstanceType: 
+    Type: "String"
+    Default: "t2.large"
+    Description: "EC2 instance type, e.g. m1.small, m1.large, etc."
+  Name:
+    Type: "String"
+    Default: "CHANGE_ME"
+    Description: "name of the resource"
+
+Resources:
+  lookupdevbox:
+    Type: 'AWS::Cloud9::EnvironmentEC2'
+    Properties: 
+      InstanceType: !Ref InstanceType
+      AutomaticStopTimeMinutes: 20
+      Name: !Ref Name
+  
