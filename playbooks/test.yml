@@ -1,0 +1,6 @@
+---
+- hosts: localhost
+  tasks:
+
+    - name: Ensure Python
+      apt: name=python state=present
