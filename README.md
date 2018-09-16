@@ -8,7 +8,7 @@ It fufills the following behaviors, behavior driven development style:
 
 Use `ansible-playbook` to run the appropriate command. The Ansible ties together the Cloudformation template, stack name, region so you have a single, short command to run.
 
-## "As a user I want to easily migrate from the `aws cloudformation` command to this module (and back again, if required)
+## "As a user I want to easily migrate from the `aws cloudformation` command to this module (and back again, if required)"
 
 I show how to use the [Cloudformation External Parameter JSON files](https://github.com/aws/aws-cli/issues/2275) to provide values to the Cloudformation template.
 
@@ -44,7 +44,28 @@ Must run:
 
     $ ansible-playbook playbooks/cloudformation_with_params_file.yml    
 
-before
+before:
+
     $ ansible-playbook playbooks/cloudformation_with_lookup.yml
 
 (as the former generates an output the latter uses)
+
+# "But why not X?"
+
+I found I valued two things:
+
+  1. Simplicity: ability to onboard new team members quickly. It's easier to explain 4 lines of connecting YAML than some custom Cloudformation System
+
+  2. I want to be able to back away and use the aws cli if I want. (Granted, this stategy falls down with the dynamic lookup piece, but everything falls apart someday).
+
+# "But why Ansible?"
+
+I actually didn't start here! I started writing a Makfile (well, using Python's [Invoke](http://www.pyinvoke.org/) task runner).
+
+But after about 2 cloudformation stack calls I wondered how many utility functions I would need to write to get things at a good, simple abstraction layer for my users. And that I'd need to bring in [cfn-create-or-update](https://cloudonaut.io/painlessly-create-or-update-cloudformation-stack-idempotent/), and that means I need to bring in some Node code in addition to my Python code.
+
+Ansible does both of those things: having already written code that calls Cloudformation appropriately, and that handles created vs new resources.
+
+And Ansible also essentially blocks until the Cloudformation task is done (and thrown an exit code if the Cloudformation didn't build properly). Super useful if you want to put this as part of a CI runner!
+
+I have mostly had annoying experiences with Ansible in the past, but this kind of fit!
